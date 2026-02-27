@@ -127,7 +127,7 @@ toggling a configurable "Live" role.
 - Validation rules for each setting
 
 **Layer 2 — `.env`** (not committed, runtime overrides):
-- `PUCK_LOG_LEVEL`, `PUCK_GUILD_ID`, `PUCK_LIVE_ROLE_ID`, etc.
+- `LOG_LEVEL`, `GUILD_ID`, `PUCK_LIVE_ROLE_ID`, etc.
 - Documented in `.env.template` (committed)
 
 **Layer 3 — Docker Secrets** (sensitive, never committed):
