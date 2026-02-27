@@ -53,7 +53,9 @@ class ConfigManager:
     def _load_json(self, config_path: str) -> None:
         path = Path(config_path)
         if not path.exists():
-            log.warning(f"⚠️ Config file not found at {config_path} — using empty defaults")
+            log.warning(
+                f"⚠️ Config file not found at {config_path} — using empty defaults"
+            )
             return
         try:
             with open(path, "r", encoding="utf-8") as f:
@@ -65,7 +67,9 @@ class ConfigManager:
     def _load_streams(self, streams_path: str) -> None:
         path = Path(streams_path)
         if not path.exists():
-            log.warning(f"⚠️ Streams file not found at {streams_path} — no streams tracked")
+            log.warning(
+                f"⚠️ Streams file not found at {streams_path} — no streams tracked"
+            )
             return
         try:
             with open(path, "r", encoding="utf-8") as f:
@@ -80,12 +84,12 @@ class ConfigManager:
     # -------------------------------------------------------------------------
     def _apply_env_overrides(self) -> None:
         env_map = {
-            "PUCK_LOG_LEVEL": ("logging", "level"),
-            "PUCK_LOG_FORMAT": ("logging", "format"),
-            "PUCK_LOG_FILE": ("logging", "file"),
-            "PUCK_LOG_CONSOLE": ("logging", "console"),
-            "PUCK_COMMAND_PREFIX": ("bot", "command_prefix"),
-            "PUCK_GUILD_ID": ("fluxer", "guild_id"),
+            "LOG_LEVEL": ("logging", "level"),
+            "LOG_FORMAT": ("logging", "format"),
+            "LOG_FILE": ("logging", "file"),
+            "LOG_CONSOLE": ("logging", "console"),
+            "COMMAND_PREFIX": ("bot", "command_prefix"),
+            "GUILD_ID": ("fluxer", "guild_id"),
             "PUCK_LIVE_ROLE_ID": ("fluxer", "live_role_id"),
             "PUCK_ANNOUNCE_CHANNEL_ID": ("fluxer", "announcement_channel_id"),
             "PUCK_POLL_INTERVAL": ("polling", "interval_seconds"),
@@ -103,9 +107,21 @@ class ConfigManager:
     def _apply_secret_overrides(self) -> None:
         secret_map = {
             "TOKEN_FILE": ("bot", "token", "/run/secrets/puck_token"),
-            "TWITCH_CLIENT_ID_FILE": ("twitch", "client_id", "/run/secrets/twitch_client_id"),
-            "TWITCH_CLIENT_SECRET_FILE": ("twitch", "client_secret", "/run/secrets/twitch_client_secret"),
-            "YOUTUBE_API_KEY_FILE": ("youtube", "api_key", "/run/secrets/youtube_api_key"),
+            "TWITCH_CLIENT_ID_FILE": (
+                "twitch",
+                "client_id",
+                "/run/secrets/twitch_client_id",
+            ),
+            "TWITCH_CLIENT_SECRET_FILE": (
+                "twitch",
+                "client_secret",
+                "/run/secrets/twitch_client_secret",
+            ),
+            "YOUTUBE_API_KEY_FILE": (
+                "youtube",
+                "api_key",
+                "/run/secrets/youtube_api_key",
+            ),
         }
         for env_key, (section, key, default_path) in secret_map.items():
             secret_path = os.environ.get(env_key, default_path)
@@ -139,7 +155,9 @@ class ConfigManager:
         try:
             return int(value)
         except (TypeError, ValueError):
-            log.warning(f"⚠️ [{section}.{key}] expected int, got {value!r} — using {fallback}")
+            log.warning(
+                f"⚠️ [{section}.{key}] expected int, got {value!r} — using {fallback}"
+            )
             return fallback
 
     def get_bool(self, section: str, key: str, fallback: bool = True) -> bool:
