@@ -23,8 +23,8 @@ services:
       - twitch_client_secret
       - youtube_api_key
     volumes:
-      - /opt/bragi/bots/puck-bot/logs:/app/logs
-      - /opt/bragi/bots/puck-bot/data:/app/data
+      - /opt/bragi/puck/logs:/app/logs
+      - /opt/bragi/puck/data:/app/data
     networks:
       - bragi
 
