@@ -1,0 +1,10 @@
+# ============================================================================
+# Puck Bot - Requirements
+# ============================================================================
+# FILE VERSION: v1.0.0
+# Repository: https://github.com/the-alphabet-cartel/puck
+# Community: The Alphabet Cartel - https://fluxer.gg/yGJfJH5C
+# ============================================================================
+
+fluxer-py
+httpx

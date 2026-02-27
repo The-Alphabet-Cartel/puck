@@ -1,0 +1,16 @@
+{
+  "_metadata": {
+    "file_version": "v1.0.0",
+    "last_modified": "2026-02-26",
+    "bot": "puck",
+    "description": "Tracked stream mappings — Fluxer user ID to platform accounts"
+  },
+  "streams": [
+    {
+      "fluxer_user_id": "REPLACE_WITH_FLUXER_USER_ID",
+      "display_name": "ExampleUser",
+      "twitch_username": "exampleuser",
+      "youtube_channel_id": null
+    }
+  ]
+}
