@@ -34,7 +34,7 @@
 
   "fluxer": {
     "description": "Fluxer community settings",
-    "guild_id": "${PUCK_GUILD_ID}",
+    "guild_id": "${GUILD_ID}",
     "live_role_id": "${PUCK_LIVE_ROLE_ID}",
     "announcement_channel_id": "${PUCK_ANNOUNCE_CHANNEL_ID}",
     "defaults": {
