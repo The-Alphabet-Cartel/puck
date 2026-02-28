@@ -89,7 +89,7 @@ class ConfigManager:
             "PUCK_LOG_FILE": ("logging", "file"),
             "LOG_CONSOLE": ("logging", "console"),
             "COMMAND_PREFIX": ("bot", "command_prefix"),
-            "GUILD_ID": ("fluxer", "guild_id"),
+            "PUCK_GUILD_ID": ("fluxer", "guild_id"),
             "PUCK_LIVE_ROLE_ID": ("fluxer", "live_role_id"),
             "PUCK_ANNOUNCE_CHANNEL_ID": ("fluxer", "announcement_channel_id"),
             "PUCK_POLL_INTERVAL": ("polling", "interval_seconds"),

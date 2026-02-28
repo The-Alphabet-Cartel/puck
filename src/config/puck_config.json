@@ -1,60 +1,60 @@
 {
-  "_metadata": {
-    "file_version": "v1.0.0",
-    "last_modified": "2026-02-26",
-    "bot": "puck",
-    "clean_architecture": "Compliant"
-  },
+	"_metadata": {
+		"file_version": "v1.0.0",
+		"last_modified": "2026-02-26",
+		"bot": "puck",
+		"clean_architecture": "Compliant"
+	},
 
-  "polling": {
-    "description": "Stream polling configuration",
-    "interval_seconds": 90,
-    "defaults": { "interval_seconds": 90 },
-    "validation": {
-      "interval_seconds": {
-        "type": "integer",
-        "range": [30, 300],
-        "required": true
-      }
-    }
-  },
+	"polling": {
+		"description": "Stream polling configuration",
+		"interval_seconds": 90,
+		"defaults": { "interval_seconds": 90 },
+		"validation": {
+			"interval_seconds": {
+				"type": "integer",
+				"range": [30, 300],
+				"required": true
+			}
+		}
+	},
 
-  "youtube": {
-    "description": "YouTube API quota management",
-    "poll_multiplier": 3,
-    "defaults": { "poll_multiplier": 3 },
-    "validation": {
-      "poll_multiplier": {
-        "type": "integer",
-        "range": [1, 10],
-        "required": true
-      }
-    }
-  },
+	"youtube": {
+		"description": "YouTube API quota management",
+		"poll_multiplier": 3,
+		"defaults": { "poll_multiplier": 3 },
+		"validation": {
+			"poll_multiplier": {
+				"type": "integer",
+				"range": [1, 10],
+				"required": true
+			}
+		}
+	},
 
-  "fluxer": {
-    "description": "Fluxer community settings",
-    "guild_id": "${GUILD_ID}",
-    "live_role_id": "${PUCK_LIVE_ROLE_ID}",
-    "announcement_channel_id": "${PUCK_ANNOUNCE_CHANNEL_ID}",
-    "defaults": {
-      "guild_id": "",
-      "live_role_id": "",
-      "announcement_channel_id": ""
-    },
-    "validation": {
-      "guild_id": {
-        "type": "string",
-        "required": true
-      },
-      "live_role_id": {
-        "type": "string",
-        "required": true
-      },
-      "announcement_channel_id": {
-        "type": "string",
-        "required": false
-      }
-    }
-  }
+	"fluxer": {
+		"description": "Fluxer community settings",
+		"guild_id": "${PUCK_GUILD_ID}",
+		"live_role_id": "${PUCK_LIVE_ROLE_ID}",
+		"announcement_channel_id": "${PUCK_ANNOUNCE_CHANNEL_ID}",
+		"defaults": {
+			"guild_id": "",
+			"live_role_id": "",
+			"announcement_channel_id": ""
+		},
+		"validation": {
+			"guild_id": {
+				"type": "string",
+				"required": true
+			},
+			"live_role_id": {
+				"type": "string",
+				"required": true
+			},
+			"announcement_channel_id": {
+				"type": "string",
+				"required": false
+			}
+		}
+	}
 }

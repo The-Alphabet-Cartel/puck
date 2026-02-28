@@ -78,7 +78,7 @@ Copy `.env.template` to `.env` and configure:
 | `PUCK_LOG_CONSOLE` | `true` | Enable console logging |
 | `PUCK_LOG_FILE` | — | Optional log file path |
 | `PUCK_COMMAND_PREFIX` | `!` | Command prefix (future use) |
-| `PUCK_GUILD_ID` | — | Fluxer guild ID (**required**) |
+| `PUCK_PUCK_GUILD_ID` | — | Fluxer guild ID (**required**) |
 | `PUCK_LIVE_ROLE_ID` | — | Role ID to assign when live (**required**) |
 | `PUCK_ANNOUNCE_CHANNEL_ID` | — | Announcement channel (future v1.1) |
 | `PUCK_POLL_INTERVAL` | `90` | Seconds between Twitch poll cycles (30–300) |
@@ -148,7 +148,7 @@ cd puck
 
 # 2. Copy and configure environment
 cp .env.template .env
-# Edit .env — set PUCK_GUILD_ID and PUCK_LIVE_ROLE_ID at minimum
+# Edit .env — set PUCK_PUCK_GUILD_ID and PUCK_LIVE_ROLE_ID at minimum
 
 # 3. Create secrets (see secrets/README.md for detailed instructions)
 mkdir -p secrets
