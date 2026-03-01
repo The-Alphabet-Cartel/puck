@@ -11,7 +11,7 @@ name: puck
 x-common: &common
   restart: unless-stopped
   networks:
-    - bragi-net
+    - puck-net
 
 ### Common Environmental Variables ###
 x-env: &env
@@ -62,5 +62,5 @@ secrets:
     file: ./secrets/youtube_api_key
 
 networks:
-  bragi-net:
-    external: true
+  puck-net:
+    driver: bridge
