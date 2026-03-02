@@ -45,9 +45,9 @@ services:
       - twitch_client_secret
       - youtube_api_key
     volumes:
-      - /opt/bragi/puck/logs:/app/logs
-      - /opt/bragi/puck/data:/app/data
-      - /opt/bragi/puck/config:/app/src/config
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - ./config:/app/src/config
     healthcheck:
       <<: *health
 
