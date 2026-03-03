@@ -202,6 +202,7 @@ puck/
     │   └── embed_announcer.py    ← Stub for v1.1 stream embeds
     ├── managers/
     │   ├── config_manager.py     ← Three-layer config (Rule #7)
+    │   ├── config_watcher.py     ← Hot-reload watcher (Rule #13)
     │   ├── logging_config_manager.py  ← Colorized logging (Rule #9)
     │   ├── twitch_manager.py     ← Twitch Helix API + OAuth
     │   ├── youtube_manager.py    ← YouTube API + RSS pre-check
@@ -228,6 +229,7 @@ puck/
 | #10 Python 3.12 + Venv | ✅ Multi-stage Docker build |
 | #11 File System Tools | ✅ |
 | #12 Python Entrypoint + tini | ✅ PUID/PGID support |
+| #13 Volume-Mounted Config + Hot-Reload | ✅ ConfigWatcher + entrypoint seeding |
 
 ---
 

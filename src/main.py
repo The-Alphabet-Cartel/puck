@@ -12,11 +12,11 @@ MISSION - NEVER TO BE VIOLATED:
 
 ============================================================================
 Main entry point for puck-bot. Creates all managers via factory functions,
-registers the on_ready event, starts the background polling task, and runs
-the Fluxer bot.
+registers the on_ready event, starts the background polling task and config
+watcher, and runs the Fluxer bot.
 ----------------------------------------------------------------------------
-FILE VERSION: v1.1.0
-LAST MODIFIED: 2026-02-26
+FILE VERSION: v1.2.0
+LAST MODIFIED: 2026-03-02
 BOT: puck-bot
 CLEAN ARCHITECTURE: Compliant
 Repository: https://github.com/the-alphabet-cartel/puck
@@ -31,6 +31,7 @@ import fluxer
 
 from src.managers.config_manager import create_config_manager
 from src.managers.logging_config_manager import create_logging_config_manager
+from src.managers.config_watcher import create_config_watcher
 from src.managers.twitch_manager import create_twitch_manager
 from src.managers.youtube_manager import create_youtube_manager
 from src.managers.stream_state_manager import create_stream_state_manager
@@ -112,6 +113,35 @@ def main() -> None:
     )
 
     # =========================================================================
+    # Phase 5b: Config watcher — hot-reload without container restart (Rule #13)
+    # =========================================================================
+    config_watcher = create_config_watcher(config_dir="/app/src/config")
+
+    async def _on_config_change(filename: str) -> None:
+        """Callback fired by ConfigWatcher when a JSON file is modified."""
+        if filename == "tracked_streams.json":
+            config.reload_streams()
+            new_tracked = config.get_tracked_streams()
+            tc = sum(1 for s in new_tracked if s.get("twitch_username"))
+            yc = sum(1 for s in new_tracked if s.get("youtube_channel_id"))
+            log.info(
+                f"Hot-reloaded tracked_streams.json — "
+                f"{len(new_tracked)} stream(s): {tc} Twitch, {yc} YouTube"
+            )
+
+        elif filename == "puck_config.json":
+            # Main config reload is partial — env/secrets still override.
+            # Values read per-request (like poll interval) pick up changes
+            # automatically. Values cached at startup need a restart.
+            log.warning(
+                f"{filename} changed — behavioral values read per-request "
+                f"will update automatically. Cached startup values (token, "
+                f"guild ID) require a container restart."
+            )
+
+    config_watcher.on_change(_on_config_change)
+
+    # =========================================================================
     # Phase 6: Register events and start
     # =========================================================================
     @bot.event
@@ -123,6 +153,8 @@ def main() -> None:
         )
         # Start the background polling task
         asyncio.create_task(_run_monitor())
+        # Start the config watcher
+        await config_watcher.start()
 
     async def _run_monitor() -> None:
         """Wrapper to catch and log monitor startup errors."""

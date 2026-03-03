@@ -84,6 +84,7 @@ toggling a configurable "Live" role.
 | Stream monitor handler | ✅ Complete | 2026-02-26 |
 | Embed announcer stub | ✅ Complete | 2026-02-26 |
 | Main dispatcher + polling loop | ✅ Complete | 2026-02-26 |
+| Rule #13: Volume mount + hot-reload | ✅ Complete | 2026-03-02 |
 | Docker build & test | ⬜ Not Started | — |
 | Deployment to Bragi | ⬜ Not Started | — |
 

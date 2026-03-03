@@ -15,8 +15,8 @@ ConfigManager for puck-bot. Loads the three-layer config stack: JSON
 defaults → .env overrides → Docker Secrets. Also loads the separate
 tracked_streams.json for stream-to-user mappings.
 ----------------------------------------------------------------------------
-FILE VERSION: v1.1.0
-LAST MODIFIED: 2026-02-26
+FILE VERSION: v1.2.0
+LAST MODIFIED: 2026-03-02
 BOT: puck-bot
 CLEAN ARCHITECTURE: Compliant
 Repository: https://github.com/the-alphabet-cartel/puck
@@ -42,6 +42,7 @@ class ConfigManager:
     ) -> None:
         self._config: dict[str, Any] = {}
         self._streams: list[dict[str, Any]] = []
+        self._streams_path = streams_path
         self._load_json(config_path)
         self._load_streams(streams_path)
         self._apply_env_overrides()
@@ -206,6 +207,12 @@ class ConfigManager:
     def get_announcement_channel_id(self) -> str:
         """Get the announcement channel ID (future use)."""
         return str(self.get("fluxer", "announcement_channel_id", ""))
+
+    def reload_streams(self) -> list[dict[str, Any]]:
+        """Re-read tracked_streams.json from disk. Used by ConfigWatcher hot-reload."""
+        self._load_streams(self._streams_path)
+        log.info(f"ℹ️ Reloaded tracked streams: {len(self._streams)} stream(s)")
+        return self._streams
 
 
 def create_config_manager(
