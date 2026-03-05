@@ -1,5 +1,5 @@
 # ============================================================================
-# Puck Bot - Docker Compose
+# Puck - Docker Compose
 # ============================================================================
 # FILE VERSION: v1.0.0
 # Repository: https://github.com/the-alphabet-cartel/puck
@@ -11,7 +11,7 @@ name: puck
 x-common: &common
   restart: unless-stopped
   networks:
-    - puck-net
+    - puck
 
 ### Common Environmental Variables ###
 x-env: &env
@@ -45,9 +45,9 @@ services:
       - twitch_client_secret
       - youtube_api_key
     volumes:
-      - ./logs:/app/logs
-      - ./data:/app/data
       - ./config:/app/src/config
+      - ./data:/app/data
+      - ./logs:/app/logs
     healthcheck:
       <<: *health
 
@@ -62,5 +62,5 @@ secrets:
     file: ./secrets/youtube_api_key
 
 networks:
-  puck-net:
+  puck:
     driver: bridge
