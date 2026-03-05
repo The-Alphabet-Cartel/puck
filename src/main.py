@@ -15,8 +15,8 @@ Main entry point for puck-bot. Creates all managers via factory functions,
 registers the on_ready event, starts the background polling task and config
 watcher, and runs the Fluxer bot.
 ----------------------------------------------------------------------------
-FILE VERSION: v1.2.0
-LAST MODIFIED: 2026-03-02
+FILE VERSION: v1.3.0
+LAST MODIFIED: 2026-03-04
 BOT: puck-bot
 CLEAN ARCHITECTURE: Compliant
 Repository: https://github.com/the-alphabet-cartel/puck
@@ -37,6 +37,7 @@ from src.managers.youtube_manager import create_youtube_manager
 from src.managers.stream_state_manager import create_stream_state_manager
 from src.handlers.stream_monitor import create_stream_monitor
 from src.handlers.embed_announcer import create_embed_announcer
+from src.handlers.admin_commands import create_admin_commands_handler
 
 
 def main() -> None:
@@ -112,6 +113,12 @@ def main() -> None:
         embed_announcer=embed_announcer,
     )
 
+    admin_cmds = create_admin_commands_handler(
+        bot=bot,
+        config_manager=config,
+        logging_manager=logging_mgr,
+    )
+
     # =========================================================================
     # Phase 5b: Config watcher — hot-reload without container restart (Rule #13)
     # =========================================================================
@@ -155,6 +162,30 @@ def main() -> None:
         asyncio.create_task(_run_monitor())
         # Start the config watcher
         await config_watcher.start()
+
+    @bot.event
+    async def on_message(message: fluxer.Message) -> None:
+        # Ignore messages from bots (including ourselves)
+        if message.author.bot:
+            return
+
+        # Command-first routing: only ! prefixed messages go to handlers
+        if not message.content.strip().startswith("!"):
+            return
+
+        # Dedup guard — fluxer-py fires every event twice
+        if not hasattr(on_message, "_seen"):
+            on_message._seen = set()
+        msg_id = getattr(message, "id", None)
+        if msg_id and msg_id in on_message._seen:
+            return
+        if msg_id:
+            on_message._seen.add(msg_id)
+            # Prevent unbounded growth — keep last 100 message IDs
+            if len(on_message._seen) > 100:
+                on_message._seen = set(list(on_message._seen)[-50:])
+
+        await admin_cmds.handle(message)
 
     async def _run_monitor() -> None:
         """Wrapper to catch and log monitor startup errors."""
