@@ -15,8 +15,8 @@ Stream monitor handler. Runs the background polling loop that checks Twitch
 and YouTube for live streams, compares against persisted state, and toggles
 the configured "Live" role on Fluxer for community members.
 ----------------------------------------------------------------------------
-FILE VERSION: v1.1.0
-LAST MODIFIED: 2026-02-26
+FILE VERSION: v1.2.0
+LAST MODIFIED: 2026-03-04
 BOT: puck-bot
 CLEAN ARCHITECTURE: Compliant
 Repository: https://github.com/the-alphabet-cartel/puck
@@ -27,6 +27,7 @@ import asyncio
 import traceback
 
 import fluxer
+import httpx
 
 from src.handlers.embed_announcer import EmbedAnnouncer
 from src.managers.config_manager import ConfigManager
@@ -35,6 +36,8 @@ from src.managers.stream_state_manager import StreamStateManager
 from src.managers.twitch_manager import TwitchManager
 from src.managers.youtube_manager import YouTubeManager
 from src.models.stream_status import StreamStatus
+
+FLUXER_API_BASE = "https://api.fluxer.app/v1"
 
 
 class StreamMonitor:
@@ -60,6 +63,8 @@ class StreamMonitor:
         self._poll_count: int = 0
         self._youtube_cycle: int = 0
         self._running: bool = False
+        self._current_channel_name: str | None = None  # Track to avoid redundant renames
+        self._rename_http: httpx.AsyncClient | None = None
 
     # -------------------------------------------------------------------------
     # User-to-Stream Mapping
@@ -148,6 +153,47 @@ class StreamMonitor:
             self._log.error(f"❌ Failed to remove Live role from {status.display_name}: {e}")
 
     # -------------------------------------------------------------------------
+    # Channel Title Toggle
+    # -------------------------------------------------------------------------
+    async def _sync_channel_title(self, anyone_live: bool) -> None:
+        """Rename the announcement channel based on whether anyone is streaming.
+
+        Only fires on state transitions (idle→live or live→idle) to avoid
+        hitting Fluxer's channel rename rate limit (2 per 10 minutes).
+        """
+        channel_id = self._config.get_announcement_channel_id()
+        if not channel_id:
+            return
+
+        desired = (
+            self._config.get_channel_name_live() if anyone_live
+            else self._config.get_channel_name_idle()
+        )
+
+        # Skip if already in the desired state
+        if self._current_channel_name == desired:
+            return
+
+        if self._rename_http is None or self._rename_http.is_closed:
+            self._rename_http = httpx.AsyncClient(timeout=15.0)
+
+        token = self._config.get_token()
+        try:
+            resp = await self._rename_http.patch(
+                f"{FLUXER_API_BASE}/channels/{channel_id}",
+                headers={
+                    "Authorization": f"Bot {token}",
+                    "Content-Type": "application/json",
+                },
+                json={"name": desired},
+            )
+            resp.raise_for_status()
+            self._current_channel_name = desired
+            self._log.info(f"Channel title set to: {desired}")
+        except httpx.HTTPError as e:
+            self._log.warning(f"⚠️ Could not update channel title: {e}")
+
+    # -------------------------------------------------------------------------
     # Polling Loop
     # -------------------------------------------------------------------------
     async def poll_once(self) -> None:
@@ -191,6 +237,18 @@ class StreamMonitor:
             if status.fluxer_user_id:
                 await self._remove_live_role(status)
                 await self._embed.delete_announcement(status)
+
+        # --- STILL_LIVE: Update embeds for streams that remain live ---
+        # The embed announcer handles its own 5-minute throttle internally
+        for status in twitch_live:
+            key = f"twitch:{status.platform_username}"
+            if key not in {f"twitch:{s.platform_username}" for s in went_live}:
+                # This stream was already live last cycle — update embed
+                if status.fluxer_user_id:
+                    await self._embed.update_announcement(status)
+
+        # --- Channel title: toggle based on whether anyone is live ---
+        await self._sync_channel_title(anyone_live=len(twitch_live) > 0)
 
         if self._poll_count % 10 == 0:
             live_count = len(all_live)
