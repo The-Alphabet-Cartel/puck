@@ -208,6 +208,14 @@ class ConfigManager:
         """Get the announcement channel ID (future use)."""
         return str(self.get("fluxer", "announcement_channel_id", ""))
 
+    def get_channel_name_live(self) -> str:
+        """Get the channel name to use when someone is streaming."""
+        return str(self.get("fluxer", "channel_name_live", "🟢 Live Now"))
+
+    def get_channel_name_idle(self) -> str:
+        """Get the channel name to use when nobody is streaming."""
+        return str(self.get("fluxer", "channel_name_idle", "Live Now"))
+
     def reload_streams(self) -> list[dict[str, Any]]:
         """Re-read tracked_streams.json from disk. Used by ConfigWatcher hot-reload."""
         self._load_streams(self._streams_path)
