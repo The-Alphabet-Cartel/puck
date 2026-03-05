@@ -37,10 +37,14 @@
 		"guild_id": "${PUCK_GUILD_ID}",
 		"live_role_id": "${PUCK_LIVE_ROLE_ID}",
 		"announcement_channel_id": "${PUCK_ANNOUNCE_CHANNEL_ID}",
+		"channel_name_live": "🟢 Live Now",
+		"channel_name_idle": "Live Now",
 		"defaults": {
 			"guild_id": "",
 			"live_role_id": "",
-			"announcement_channel_id": ""
+			"announcement_channel_id": "",
+			"channel_name_live": "🟢 Live Now",
+			"channel_name_idle": "Live Now"
 		},
 		"validation": {
 			"guild_id": {
@@ -52,6 +56,14 @@
 				"required": true
 			},
 			"announcement_channel_id": {
+				"type": "string",
+				"required": false
+			},
+			"channel_name_live": {
+				"type": "string",
+				"required": false
+			},
+			"channel_name_idle": {
 				"type": "string",
 				"required": false
 			}
